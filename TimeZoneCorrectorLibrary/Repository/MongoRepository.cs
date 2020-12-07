@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using TimeZoneCorrectorLibrary.Abstraction;
+using TimeZoneCorrectorLibrary.Extention;
 
 namespace TimeZoneCorrectorLibrary.Repository
 {
@@ -14,11 +15,18 @@ namespace TimeZoneCorrectorLibrary.Repository
         where TDocument : IDocument
     {
         private readonly IMongoCollection<TDocument> _collection;
-
+        private readonly IMongoDatabase _database;
         public MongoRepository(IMongoDbSettings settings)
         {
-            var database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
-            _collection = database.GetCollection<TDocument>(GetCollectionName(typeof(TDocument)));
+            _database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
+            _collection = _database.GetCollection<TDocument>(GetCollectionName(typeof(TDocument)));
+        }
+
+        public virtual bool CheckToDBConnection()
+        {
+            if (!_database.Ping())
+                return false;
+            return true;
         }
 
         private protected string GetCollectionName(Type documentType)

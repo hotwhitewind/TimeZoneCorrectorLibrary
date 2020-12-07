@@ -8,6 +8,7 @@ namespace TimeZoneCorrectorLibrary.Abstraction
 {
     public interface IMongoRepository<TDocument> where TDocument : IDocument
     {
+        bool CheckToDBConnection();
         IQueryable<TDocument> AsQueryable();
 
         IEnumerable<TDocument> FilterBy(
