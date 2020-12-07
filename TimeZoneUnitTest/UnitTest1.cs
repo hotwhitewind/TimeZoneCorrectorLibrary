@@ -16,7 +16,11 @@ namespace TimeZoneUnitTest
         public void GetAllCountries()
         {
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<DIModule>();
+            containerBuilder.RegisterModule(new DIModule()
+            {
+                ConnectionStringConfig = "mongodb://localhost:27017",
+                DatabseNameConfig = "atlas"
+            });
             this.container = containerBuilder.Build();
             _mongoRepository = container.Resolve<IMongoRepository<Country>>();
             Assert.IsNotNull(_mongoRepository);
@@ -29,7 +33,11 @@ namespace TimeZoneUnitTest
         public void GetStateByCountry()
         {
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<DIModule>();
+            containerBuilder.RegisterModule(new DIModule()
+            {
+                ConnectionStringConfig = "mongodb://localhost:27017",
+                DatabseNameConfig = "atlas"
+            });
             this.container = containerBuilder.Build();
             _mongoRepository = container.Resolve<IMongoRepository<Country>>();
             Assert.IsNotNull(_mongoRepository);
@@ -43,7 +51,11 @@ namespace TimeZoneUnitTest
         public void GetCitiesByCountryAndState()
         {
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<DIModule>();
+            containerBuilder.RegisterModule(new DIModule()
+            {
+                ConnectionStringConfig = "mongodb://localhost:27017",
+                DatabseNameConfig = "atlas"
+            });
             this.container = containerBuilder.Build();
             _mongoRepository = container.Resolve<IMongoRepository<Country>>();
             Assert.IsNotNull(_mongoRepository);
@@ -57,7 +69,11 @@ namespace TimeZoneUnitTest
         public void GetCityByCountryAndState()
         {
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<DIModule>();
+            containerBuilder.RegisterModule(new DIModule()
+            {
+                ConnectionStringConfig = "mongodb://localhost:27017",
+                DatabseNameConfig = "atlas"
+            });
             this.container = containerBuilder.Build();
             _mongoRepository = container.Resolve<IMongoRepository<Country>>();
             Assert.IsNotNull(_mongoRepository);
@@ -75,7 +91,11 @@ namespace TimeZoneUnitTest
         public void TestDBConnection()
         {
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<DIModule>();
+            containerBuilder.RegisterModule(new DIModule()
+            {
+                ConnectionStringConfig = "mongodb://localhost:27017",
+                DatabseNameConfig = "atlas"
+            });
             this.container = containerBuilder.Build();
             _mongoRepository = container.Resolve<IMongoRepository<Country>>();
             Assert.IsNotNull(_mongoRepository);
@@ -89,7 +109,11 @@ namespace TimeZoneUnitTest
         public void TestTimeZoneCorrector()
         {
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<DIModule>();
+            containerBuilder.RegisterModule(new DIModule()
+            {
+                ConnectionStringConfig = "mongodb://localhost:27017",
+                DatabseNameConfig = "atlas"
+            });
             this.container = containerBuilder.Build();
             _mongoRepository = container.Resolve<IMongoRepository<Country>>();
             Assert.IsNotNull(_mongoRepository);

@@ -9,11 +9,20 @@ namespace TimeZoneCorrectorLibrary
 {
     public class DIModule : Module 
     {
+        public string ConnectionStringConfig { get; set; }
+        public string DatabseNameConfig { get; set; }
+
         protected override void Load(ContainerBuilder builder)
         {
-            builder.Register(c => new MongoDbSettings() 
-            { ConnectionString = "mongodb://localhost:27017",DatabaseName = "atlas"})
-                .As<IMongoDbSettings>();
+            builder.Register(c =>
+            {
+                return new MongoDbSettings() 
+                {
+                    ConnectionString = ConnectionStringConfig,
+                    DatabaseName = DatabseNameConfig
+                };
+            }).As<IMongoDbSettings>();
+
             builder.RegisterGeneric(typeof(MongoRepository<>))
                 .As(typeof(IMongoRepository<>))
                 .SingleInstance();
