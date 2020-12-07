@@ -25,6 +25,7 @@ namespace TimeZoneUnitTest
             _timeZoneCorrector = container.Resolve<ITimeZoneCorrector>();
             Assert.IsNotNull(_timeZoneCorrector);
             var countries = _timeZoneCorrector.GetAllCountries();
+            Assert.IsNotNull(countries);
             Assert.IsTrue(countries.Count != 0);
         }
 
