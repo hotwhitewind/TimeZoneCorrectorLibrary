@@ -46,9 +46,17 @@ namespace TimeZoneCorrectorLibrary
 
         public List<string> GetAllCitiesByState(string countryName, string stateName)
         {
-            return _mongoRepository.FindOne(c => c.CountryName == countryName)
-                .States?.Find(c => c.StateName == stateName)
-                .Cities?.Select(c => c.CityName).ToList();
+            if (string.IsNullOrEmpty(stateName))
+            {
+                return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                   .Cities?.Select(c => c.CityName).ToList();
+            }
+            else
+            {
+                return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                    .States?.Find(c => c.StateName == stateName)
+                    .Cities?.Select(c => c.CityName).ToList();
+            }
         }
 
         public City GetCityByCountryAndState(string countryName, string stateName, string cityName)
