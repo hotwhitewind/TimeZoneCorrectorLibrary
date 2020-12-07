@@ -26,6 +26,7 @@ namespace TimeZoneCorrectorLibrary
             builder.RegisterGeneric(typeof(MongoRepository<>))
                 .As(typeof(IMongoRepository<>))
                 .SingleInstance();
+            builder.RegisterType<TimeZoneCorrector>().As<ITimeZoneCorrector>();
         }
     }
 }

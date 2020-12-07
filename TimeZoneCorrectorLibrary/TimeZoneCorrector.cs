@@ -11,17 +11,13 @@ namespace TimeZoneCorrectorLibrary
     //http://download.geonames.org/export/dump/
     //https://github.com/dr5hn/countries-states-cities-database
 
-    public class TimeZoneCorrector
+    public class TimeZoneCorrector : ITimeZoneCorrector
     {
         private readonly IMongoRepository<Country> _mongoRepository;
 
         public TimeZoneCorrector(IMongoRepository<Country> mongoRepository)
         {
             _mongoRepository = mongoRepository;
-        }
-
-        public TimeZoneCorrector()
-        {
         }
 
         public Country ConnectionToDBTest()
