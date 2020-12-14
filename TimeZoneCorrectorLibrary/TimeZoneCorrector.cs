@@ -44,7 +44,7 @@ namespace TimeZoneCorrectorLibrary
         {
             try
             {
-                return _mongoRepository.AsQueryable()?.Select(c => c.CountryName).ToList();
+                return _mongoRepository.AsQueryable()?.Select(c => c.CountryName).OrderBy(c => c).ToList();
             }
             catch(TimeoutException ex)
             {
@@ -66,6 +66,7 @@ namespace TimeZoneCorrectorLibrary
             {
                 return _mongoRepository.FindOne(c => c.CountryName == countryName)
                     .States?.Select(c => c.StateName)
+                    .OrderBy(c => c)
                     .ToList();
             }
             catch (TimeoutException ex)
@@ -88,6 +89,7 @@ namespace TimeZoneCorrectorLibrary
             {
                 return _mongoRepository.FindOne(c => c.CountryName == countryName)
                     .Cities?.Select(c => c.CityName)
+                    .OrderBy(c => c)
                     .ToList();
             }
             catch (TimeoutException ex)
@@ -111,20 +113,26 @@ namespace TimeZoneCorrectorLibrary
                 if (string.IsNullOrEmpty(stateName) || stateName == "--")
                 {
                     return _mongoRepository.FindOne(c => c.CountryName == countryName)
-                       .Cities?.Select(c => c.CityName).ToList();
+                       .Cities?.Select(c => c.CityName)
+                       .OrderBy(c => c)
+                       .ToList();
                 }
                 else if(string.IsNullOrEmpty(districtName) || districtName == "--")
                 {
                     return _mongoRepository.FindOne(c => c.CountryName == countryName)
                         .States?.Find(c => c.StateName == stateName)
-                        .Cities?.Select(c => c.CityName).ToList();
+                        .Cities?.Select(c => c.CityName)
+                        .OrderBy(c => c)
+                        .ToList();
                 }
                 else
                 {
                     return _mongoRepository.FindOne(c => c.CountryName == countryName)
                         .States?.Find(c => c.StateName == stateName)
                         .Districts?.Find(c => c.DistrictName == districtName)
-                        .Cities?.Select(c => c.CityName).ToList();
+                        .Cities?.Select(c => c.CityName)
+                        .OrderBy(c => c)
+                        .ToList();
                 }
             }
             catch (TimeoutException ex)
@@ -190,7 +198,18 @@ namespace TimeZoneCorrectorLibrary
         {
             try
             {
-                return _mongoRepository.FindOne(c => c.CountryName == countryName);
+                Country country = _mongoRepository.FindOne(c => c.CountryName == countryName);
+                country.States?.Sort((c, f) => c.StateName.CompareTo(f.StateName));
+                country.Cities?.Sort((c, f) => c.CityName.CompareTo(f.CityName));
+                country.States?.ForEach(c => {
+                    c.Districts?.Sort((f, g) => f.DistrictName.CompareTo(g.DistrictName));
+                    c.Cities?.Sort((f, g) => f.CityName.CompareTo(g.CityName));
+                    c.Districts?.ForEach(x =>
+                    {
+                        x.Cities?.Sort((f, g) => f.CityName.CompareTo(g.CityName));
+                    });
+                });
+                return country;
             }
             catch (TimeoutException ex)
             {
