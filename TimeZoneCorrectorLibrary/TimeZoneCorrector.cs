@@ -40,7 +40,7 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public List<string> GetAllCountries()
+        public List<string> GetCountries()
         {
             try
             {
@@ -60,7 +60,7 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public List<string> GetAllStateByCountry(string countryName)
+        public List<string> GetStates(string countryName)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public List<string> GetAllCitiesByCountry(string countryName)
+        public List<string> GetCities(string countryName)
         {
             try
             {
@@ -104,19 +104,26 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public List<string> GetAllCitiesByState(string countryName, string stateName)
+        public List<string> GetCities(string countryName, string stateName, string districtName)
         {
             try
             {
-                if (string.IsNullOrEmpty(stateName))
+                if (string.IsNullOrEmpty(stateName) || stateName == "--")
                 {
                     return _mongoRepository.FindOne(c => c.CountryName == countryName)
                        .Cities?.Select(c => c.CityName).ToList();
+                }
+                else if(string.IsNullOrEmpty(districtName) || districtName == "--")
+                {
+                    return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                        .States?.Find(c => c.StateName == stateName)
+                        .Cities?.Select(c => c.CityName).ToList();
                 }
                 else
                 {
                     return _mongoRepository.FindOne(c => c.CountryName == countryName)
                         .States?.Find(c => c.StateName == stateName)
+                        .Districts?.Find(c => c.DistrictName == districtName)
                         .Cities?.Select(c => c.CityName).ToList();
                 }
             }
@@ -134,19 +141,26 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public City GetCityByCountryAndState(string countryName, string stateName, string cityName)
+        public City GetCity(string countryName, string stateName, string districtName, string cityName)
         {
             try
             {
-                if (string.IsNullOrEmpty(stateName))
+                if (string.IsNullOrEmpty(stateName) && string.IsNullOrEmpty(districtName))
                 {
                     return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                        .Cities?.Find(c => c.CityName == cityName);
+                }
+                else if(string.IsNullOrEmpty(districtName))
+                {
+                    return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                        .States?.Find(c => c.StateName == stateName)
                         .Cities?.Find(c => c.CityName == cityName);
                 }
                 else
                 {
                     return _mongoRepository.FindOne(c => c.CountryName == countryName)
                         .States?.Find(c => c.StateName == stateName)
+                        .Districts?.Find(c => c.DistrictName == districtName)
                         .Cities?.Find(c => c.CityName == cityName);
                 }
             }
@@ -170,6 +184,49 @@ namespace TimeZoneCorrectorLibrary
             var localtime = LocalDateTime.FromDateTime(datetime);
             var zonedtime = localtime.InZoneLeniently(zone);
             return zonedtime.ToInstant().InZone(zone).ToDateTimeUtc();
+        }
+
+        public Country GetCountryInfo(string countryName)
+        {
+            try
+            {
+                return _mongoRepository.FindOne(c => c.CountryName == countryName);
+            }
+            catch (TimeoutException ex)
+            {
+                return null;
+            }
+            catch (MongoDB.Driver.MongoException ex)
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public List<string> GetDistricts(string countryName, string stateName)
+        {
+            try
+            {
+                return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                    .States?.Find(c => c.StateName == stateName)
+                    .Districts.Select(c => c.DistrictName)
+                    .ToList();
+            }
+            catch (TimeoutException ex)
+            {
+                return null;
+            }
+            catch (MongoDB.Driver.MongoException ex)
+            {
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
     }
 }
