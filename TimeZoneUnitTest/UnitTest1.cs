@@ -1,6 +1,7 @@
 using Autofac;
 using ConvertGeoNamesDBToMongoDB.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using TimeZoneCorrectorLibrary;
 using TimeZoneCorrectorLibrary.Abstraction;
 
@@ -117,8 +118,10 @@ namespace TimeZoneUnitTest
             Assert.IsTrue(city1.CityName == "Sumy");
 
             Assert.AreEqual(city1.TimeZone, "Europe/Kiev");
-            var t1 = _timeZoneCorrector.ConvertToUtcFromCustomTimeZone(city1.TimeZone, new System.DateTime(1979, 03, 12, 3, 19, 00));
-            var t2 = _timeZoneCorrector.ConvertToUtcFromCustomTimeZone(city1.TimeZone, new System.DateTime(2004, 03, 12, 3, 19, 00));
+            _timeZoneCorrector.ConvertToUtcFromCustomTimeZone(city1.TimeZone, 
+                new System.DateTime(1979, 03, 12, 3, 19, 00), out DateTime t1);
+            _timeZoneCorrector.ConvertToUtcFromCustomTimeZone(city1.TimeZone, 
+                new System.DateTime(2004, 03, 12, 3, 19, 00), out DateTime t2);
             Assert.AreEqual(t1, new System.DateTime(1979, 03, 12, 0, 19, 0));
             Assert.AreEqual(t2, new System.DateTime(2004, 03, 12, 1, 19, 0));
 
@@ -127,8 +130,10 @@ namespace TimeZoneUnitTest
             Assert.IsTrue(city2.CityName == "Tashkent");
 
             Assert.AreEqual(city2.TimeZone, "Asia/Tashkent");
-            var t3 = _timeZoneCorrector.ConvertToUtcFromCustomTimeZone(city2.TimeZone, new System.DateTime(1979, 03, 12, 8, 19, 00));
-            var t4 = _timeZoneCorrector.ConvertToUtcFromCustomTimeZone(city2.TimeZone, new System.DateTime(2004, 03, 12, 8, 19, 00));
+            _timeZoneCorrector.ConvertToUtcFromCustomTimeZone(city2.TimeZone, 
+                new System.DateTime(1979, 03, 12, 8, 19, 00), out DateTime t3);
+            _timeZoneCorrector.ConvertToUtcFromCustomTimeZone(city2.TimeZone, 
+                new System.DateTime(2004, 03, 12, 8, 19, 00), out DateTime t4);
             Assert.AreEqual(t3, new System.DateTime(1979, 03, 12, 2, 19, 0));
             Assert.AreEqual(t4, new System.DateTime(2004, 03, 12, 3, 19, 0));
 

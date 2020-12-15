@@ -15,6 +15,6 @@ namespace TimeZoneCorrectorLibrary.Abstraction
         List<string> GetCities(string countryName, string stateName, string districtName);
         List<string> GetDistricts(string countryName, string stateName);
         City GetCity(string countryName, string stateName, string districtName, string cityName);
-        DateTime ConvertToUtcFromCustomTimeZone(string timezone, DateTime datetime);
+        bool ConvertToUtcFromCustomTimeZone(string timezone, DateTime datetime, out DateTime outdatetime);
     }
 }

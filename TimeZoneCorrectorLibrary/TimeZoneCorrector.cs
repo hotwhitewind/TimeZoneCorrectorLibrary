@@ -209,12 +209,22 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public DateTime ConvertToUtcFromCustomTimeZone(string timezone, DateTime datetime)
+        public bool ConvertToUtcFromCustomTimeZone(string timezone, DateTime datetime, out DateTime outdatetime)
         {
-            DateTimeZone zone = DateTimeZoneProviders.Tzdb[timezone];
-            var localtime = LocalDateTime.FromDateTime(datetime);
-            var zonedtime = localtime.InZoneLeniently(zone);
-            return zonedtime.ToInstant().InZone(zone).ToDateTimeUtc();
+            outdatetime = datetime;
+            try
+            {
+                DateTimeZone zone = DateTimeZoneProviders.Tzdb[timezone];
+                var localtime = LocalDateTime.FromDateTime(datetime);
+                var zonedtime = localtime.InZoneLeniently(zone);
+                outdatetime = zonedtime.ToInstant().InZone(zone).ToDateTimeUtc();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Error in ConvertToUtcFromCustomTimeZone");
+                return false;
+            }
         }
 
         public Country GetCountryInfo(string countryName)
