@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using TimeZoneCorrectorLibrary.Abstraction;
 using ConvertGeoNamesDBToMongoDB.Models;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace TimeZoneCorrectorLibrary
 {
@@ -14,10 +15,12 @@ namespace TimeZoneCorrectorLibrary
     public class TimeZoneCorrector : ITimeZoneCorrector
     {
         private readonly IMongoRepository<Country> _mongoRepository;
+        private readonly ILogger<TimeZoneCorrector> _logger;
 
-        public TimeZoneCorrector(IMongoRepository<Country> mongoRepository)
+        public TimeZoneCorrector(IMongoRepository<Country> mongoRepository, ILogger<TimeZoneCorrector> logger)
         {
             _mongoRepository = mongoRepository;
+            _logger = logger;  
         }
 
         public Country ConnectionToDBTest()
@@ -28,14 +31,17 @@ namespace TimeZoneCorrectorLibrary
             }
             catch (TimeoutException ex)
             {
+                _logger.LogError(ex, "Error connection to data base test (timeout)");
                 return null;
             }
             catch (MongoDB.Driver.MongoException ex)
             {
+                _logger.LogError(ex, "Error connection to data base test (mongo)");
                 return null;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error connection to data base test");
                 return null;
             }
         }
@@ -48,14 +54,17 @@ namespace TimeZoneCorrectorLibrary
             }
             catch(TimeoutException ex)
             {
+                _logger.LogError(ex, "Error get countries (timeout)");
                 return null;
             }
             catch(MongoDB.Driver.MongoException ex)
             {
+                _logger.LogError(ex, "Error get countries (mongo exception)");
                 return null;
             }
             catch(Exception ex)
             {
+                _logger.LogError(ex, "Error get countries");
                 return null;
             }
         }
@@ -71,14 +80,18 @@ namespace TimeZoneCorrectorLibrary
             }
             catch (TimeoutException ex)
             {
+                _logger.LogError(ex, "Error get states (timeout)");
                 return null;
             }
             catch (MongoDB.Driver.MongoException ex)
             {
+                _logger.LogError(ex, "Error get states (mongo exception)");
+
                 return null;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error get states");
                 return null;
             }
         }
@@ -94,14 +107,17 @@ namespace TimeZoneCorrectorLibrary
             }
             catch (TimeoutException ex)
             {
+                _logger.LogError(ex, "Error get cities (timeout)");
                 return null;
             }
             catch (MongoDB.Driver.MongoException ex)
             {
+                _logger.LogError(ex, "Error get cities (mongo)");
                 return null;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error get cities ");
                 return null;
             }
         }
@@ -137,14 +153,17 @@ namespace TimeZoneCorrectorLibrary
             }
             catch (TimeoutException ex)
             {
+                _logger.LogError(ex, "Error get cities (timeout)");
                 return null;
             }
             catch (MongoDB.Driver.MongoException ex)
             {
+                _logger.LogError(ex, "Error get cities (mongo)");
                 return null;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error get cities");
                 return null;
             }
         }
@@ -174,14 +193,18 @@ namespace TimeZoneCorrectorLibrary
             }
             catch (TimeoutException ex)
             {
+                _logger.LogError(ex, "Error get city (timeout)");
+
                 return null;
             }
             catch (MongoDB.Driver.MongoException ex)
             {
+                _logger.LogError(ex, "Error get city (mongo)");
                 return null;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error get city");
                 return null;
             }
         }
@@ -213,14 +236,17 @@ namespace TimeZoneCorrectorLibrary
             }
             catch (TimeoutException ex)
             {
+                _logger.LogError(ex, "Error get country info (timeout)");
                 return null;
             }
             catch (MongoDB.Driver.MongoException ex)
             {
+                _logger.LogError(ex, "Error get country info (mongo)");
                 return null;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error get country info");
                 return null;
             }
         }
@@ -236,14 +262,17 @@ namespace TimeZoneCorrectorLibrary
             }
             catch (TimeoutException ex)
             {
+                _logger.LogError(ex, "Error get district (timeout)");
                 return null;
             }
             catch (MongoDB.Driver.MongoException ex)
             {
+                _logger.LogError(ex, "Error get district (mongo)");
                 return null;
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error get district");
                 return null;
             }
         }
