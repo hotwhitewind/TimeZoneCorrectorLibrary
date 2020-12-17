@@ -60,9 +60,9 @@ namespace TimeZoneCorrectorLibrary.Repository
             return _collection.Find(filterExpression).FirstOrDefault();
         }
 
-        public virtual Task<TDocument> FindOneAsync(Expression<Func<TDocument, bool>> filterExpression)
+        public virtual async Task<TDocument> FindOneAsync(Expression<Func<TDocument, bool>> filterExpression)
         {
-            return Task.Run(() => _collection.Find(filterExpression).FirstOrDefaultAsync());
+            return await _collection.Find(filterExpression).FirstOrDefaultAsync();
         }
 
         public virtual TDocument FindById(string id)
@@ -72,14 +72,11 @@ namespace TimeZoneCorrectorLibrary.Repository
             return _collection.Find(filter).SingleOrDefault();
         }
 
-        public virtual Task<TDocument> FindByIdAsync(string id)
+        public virtual async Task<TDocument> FindByIdAsync(string id)
         {
-            return Task.Run(() =>
-            {
-                var objectId = new ObjectId(id);
-                var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
-                return _collection.Find(filter).SingleOrDefaultAsync();
-            });
+            var objectId = new ObjectId(id);
+            var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
+            return await _collection.Find(filter).SingleOrDefaultAsync();
         }
 
 
@@ -88,9 +85,9 @@ namespace TimeZoneCorrectorLibrary.Repository
             _collection.InsertOne(document);
         }
 
-        public virtual Task InsertOneAsync(TDocument document)
+        public virtual async Task InsertOneAsync(TDocument document)
         {
-            return Task.Run(() => _collection.InsertOneAsync(document));
+            await _collection.InsertOneAsync(document);
         }
 
         public void InsertMany(ICollection<TDocument> documents)
@@ -121,9 +118,9 @@ namespace TimeZoneCorrectorLibrary.Repository
             _collection.FindOneAndDelete(filterExpression);
         }
 
-        public Task DeleteOneAsync(Expression<Func<TDocument, bool>> filterExpression)
+        public async Task DeleteOneAsync(Expression<Func<TDocument, bool>> filterExpression)
         {
-            return Task.Run(() => _collection.FindOneAndDeleteAsync(filterExpression));
+            await _collection.FindOneAndDeleteAsync(filterExpression);
         }
 
         public void DeleteById(string id)
@@ -133,14 +130,11 @@ namespace TimeZoneCorrectorLibrary.Repository
             _collection.FindOneAndDelete(filter);
         }
 
-        public Task DeleteByIdAsync(string id)
+        public async Task DeleteByIdAsync(string id)
         {
-            return Task.Run(() =>
-            {
-                var objectId = new ObjectId(id);
-                var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
-                _collection.FindOneAndDeleteAsync(filter);
-            });
+            var objectId = new ObjectId(id);
+            var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
+            await _collection.FindOneAndDeleteAsync(filter);
         }
 
         public void DeleteMany(Expression<Func<TDocument, bool>> filterExpression)
@@ -148,9 +142,9 @@ namespace TimeZoneCorrectorLibrary.Repository
             _collection.DeleteMany(filterExpression);
         }
 
-        public Task DeleteManyAsync(Expression<Func<TDocument, bool>> filterExpression)
+        public async Task DeleteManyAsync(Expression<Func<TDocument, bool>> filterExpression)
         {
-            return Task.Run(() => _collection.DeleteManyAsync(filterExpression));
+           await _collection.DeleteManyAsync(filterExpression);
         }
     }
 }

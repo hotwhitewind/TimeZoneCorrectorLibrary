@@ -2,6 +2,7 @@ using Autofac;
 using ConvertGeoNamesDBToMongoDB.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Threading.Tasks;
 using TimeZoneCorrectorLibrary;
 using TimeZoneCorrectorLibrary.Abstraction;
 
@@ -31,7 +32,7 @@ namespace TimeZoneUnitTest
         }
 
         [TestMethod]
-        public void GetStateByCountry()
+        public async Task GetStateByCountry()
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule(new DIModule()
@@ -42,13 +43,13 @@ namespace TimeZoneUnitTest
             this.container = containerBuilder.Build();
             _timeZoneCorrector = container.Resolve<ITimeZoneCorrector>();
             Assert.IsNotNull(_timeZoneCorrector);
-            var states = _timeZoneCorrector.GetStates("Russia");
+            var states = await _timeZoneCorrector.GetStates("Russia");
             Assert.IsNotNull(states);
             Assert.IsTrue(states.Count != 0);
         }
 
         [TestMethod]
-        public void GetCitiesByCountryAndState()
+        public async Task GetCitiesByCountryAndState()
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule(new DIModule()
@@ -59,13 +60,13 @@ namespace TimeZoneUnitTest
             this.container = containerBuilder.Build();
             _timeZoneCorrector = container.Resolve<ITimeZoneCorrector>();
             Assert.IsNotNull(_timeZoneCorrector);
-            var cities = _timeZoneCorrector.GetCities("Russia", "Moscow", null);
+            var cities = await _timeZoneCorrector.GetCities("Russia", "Moscow", null);
             Assert.IsNotNull(cities);
             Assert.IsTrue(cities.Count != 0);
         }
 
         [TestMethod]
-        public void GetCityByCountryAndState()
+        public async Task GetCityByCountryAndState()
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule(new DIModule()
@@ -76,11 +77,11 @@ namespace TimeZoneUnitTest
             this.container = containerBuilder.Build();
             _timeZoneCorrector = container.Resolve<ITimeZoneCorrector>();
             Assert.IsNotNull(_timeZoneCorrector);
-            var city = _timeZoneCorrector.GetCity("Russia", "Moscow", null, "Moscow");
+            var city = await _timeZoneCorrector.GetCity("Russia", "Moscow", null, "Moscow");
             Assert.IsNotNull(city);
             Assert.IsTrue(city.CityName == "Moscow");
 
-            var city1 = _timeZoneCorrector.GetCity("Ukraine", "Sumy", null, "Sumy");
+            var city1 = await _timeZoneCorrector.GetCity("Ukraine", "Sumy", null, "Sumy");
             Assert.IsNotNull(city1);
             Assert.IsTrue(city1.CityName == "Sumy");
         }
@@ -102,7 +103,7 @@ namespace TimeZoneUnitTest
         }
 
         [TestMethod]
-        public void TestTimeZoneCorrector()
+        public async Task TestTimeZoneCorrector()
         {
             var containerBuilder = new ContainerBuilder();
             containerBuilder.RegisterModule(new DIModule()
@@ -113,7 +114,7 @@ namespace TimeZoneUnitTest
             this.container = containerBuilder.Build();
             _timeZoneCorrector = container.Resolve<ITimeZoneCorrector>();
             Assert.IsNotNull(_timeZoneCorrector);
-            var city1 = _timeZoneCorrector.GetCity("Ukraine", "Sumy", null, "Sumy");
+            var city1 = await _timeZoneCorrector.GetCity("Ukraine", "Sumy", null, "Sumy");
             Assert.IsNotNull(city1);
             Assert.IsTrue(city1.CityName == "Sumy");
 
@@ -125,7 +126,7 @@ namespace TimeZoneUnitTest
             Assert.AreEqual(t1, new System.DateTime(1979, 03, 12, 0, 19, 0));
             Assert.AreEqual(t2, new System.DateTime(2004, 03, 12, 1, 19, 0));
 
-            var city2 = _timeZoneCorrector.GetCity("Uzbekistan", "Toshkent Shahri", null, "Tashkent");
+            var city2 = await _timeZoneCorrector.GetCity("Uzbekistan", "Toshkent Shahri", null, "Tashkent");
             Assert.IsNotNull(city2);
             Assert.IsTrue(city2.CityName == "Tashkent");
 

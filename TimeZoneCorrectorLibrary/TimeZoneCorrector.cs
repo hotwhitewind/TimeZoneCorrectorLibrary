@@ -6,6 +6,7 @@ using TimeZoneCorrectorLibrary.Abstraction;
 using ConvertGeoNamesDBToMongoDB.Models;
 using System.Linq;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace TimeZoneCorrectorLibrary
 {
@@ -69,14 +70,14 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public List<string> GetStates(string countryName)
+        public async Task<List<string>> GetStates(string countryName)
         {
             try
             {
-                return _mongoRepository.FindOne(c => c.CountryName == countryName)
-                    .States?.Select(c => c.StateName)
-                    .OrderBy(c => c)
-                    .ToList();
+                Country country = await _mongoRepository.FindOneAsync(c => c.CountryName == countryName);
+                return country.States?.Select(c => c.StateName)
+                .OrderBy(c => c)
+                .ToList();
             }
             catch (TimeoutException ex)
             {
@@ -96,11 +97,12 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public List<string> GetCities(string countryName)
+        public async Task<List<string>> GetCities(string countryName)
         {
             try
             {
-                return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                Country country = await _mongoRepository.FindOneAsync(c => c.CountryName == countryName);
+                return country
                     .Cities?.Select(c => c.CityName)
                     .OrderBy(c => c)
                     .ToList();
@@ -122,20 +124,22 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public List<string> GetCities(string countryName, string stateName, string districtName)
+        public async Task<List<string>> GetCities(string countryName, string stateName, string districtName)
         {
             try
             {
                 if (string.IsNullOrEmpty(stateName) || stateName == "--")
                 {
-                    return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                    Country country = await _mongoRepository.FindOneAsync(c => c.CountryName == countryName);
+                    return country
                        .Cities?.Select(c => c.CityName)
                        .OrderBy(c => c)
                        .ToList();
                 }
                 else if(string.IsNullOrEmpty(districtName) || districtName == "--")
                 {
-                    return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                    Country country = await _mongoRepository.FindOneAsync(c => c.CountryName == countryName);
+                    return country
                         .States?.Find(c => c.StateName == stateName)
                         .Cities?.Select(c => c.CityName)
                         .OrderBy(c => c)
@@ -143,7 +147,8 @@ namespace TimeZoneCorrectorLibrary
                 }
                 else
                 {
-                    return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                    Country country = await _mongoRepository.FindOneAsync(c => c.CountryName == countryName);
+                    return country
                         .States?.Find(c => c.StateName == stateName)
                         .Districts?.Find(c => c.DistrictName == districtName)
                         .Cities?.Select(c => c.CityName)
@@ -168,24 +173,27 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public City GetCity(string countryName, string stateName, string districtName, string cityName)
+        public async Task<City> GetCity(string countryName, string stateName, string districtName, string cityName)
         {
             try
             {
                 if (string.IsNullOrEmpty(stateName) && string.IsNullOrEmpty(districtName))
                 {
-                    return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                    Country country = await _mongoRepository.FindOneAsync(c => c.CountryName == countryName);
+                    return country
                         .Cities?.Find(c => c.CityName == cityName);
                 }
                 else if(string.IsNullOrEmpty(districtName))
                 {
-                    return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                    Country country = await _mongoRepository.FindOneAsync(c => c.CountryName == countryName);
+                    return country
                         .States?.Find(c => c.StateName == stateName)
                         .Cities?.Find(c => c.CityName == cityName);
                 }
                 else
                 {
-                    return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                    Country country = await _mongoRepository.FindOneAsync(c => c.CountryName == countryName);
+                    return country
                         .States?.Find(c => c.StateName == stateName)
                         .Districts?.Find(c => c.DistrictName == districtName)
                         .Cities?.Find(c => c.CityName == cityName);
@@ -227,11 +235,11 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public Country GetCountryInfo(string countryName)
+        public async Task<Country> GetCountryInfo(string countryName)
         {
             try
             {
-                Country country = _mongoRepository.FindOne(c => c.CountryName == countryName);
+                Country country = await _mongoRepository.FindOneAsync(c => c.CountryName == countryName);
                 country.States?.Sort((c, f) => c.StateName.CompareTo(f.StateName));
                 country.Cities?.Sort((c, f) => c.CityName.CompareTo(f.CityName));
                 country.States?.ForEach(c => {
@@ -261,11 +269,12 @@ namespace TimeZoneCorrectorLibrary
             }
         }
 
-        public List<string> GetDistricts(string countryName, string stateName)
+        public async Task<List<string>> GetDistricts(string countryName, string stateName)
         {
             try
             {
-                return _mongoRepository.FindOne(c => c.CountryName == countryName)
+                Country country = await _mongoRepository.FindOneAsync(c => c.CountryName == countryName);
+                return country
                     .States?.Find(c => c.StateName == stateName)
                     .Districts.Select(c => c.DistrictName)
                     .ToList();
