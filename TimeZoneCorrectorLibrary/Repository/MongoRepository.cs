@@ -19,6 +19,7 @@ namespace TimeZoneCorrectorLibrary.Repository
         public MongoRepository(IMongoDbSettings settings)
         {
             _database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
+            var type = typeof(TDocument);
             _collection = _database.GetCollection<TDocument>(GetCollectionName(typeof(TDocument)));
         }
 
